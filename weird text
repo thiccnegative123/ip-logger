@@ -638,8 +638,8 @@ local function modifyText(input)
 local replacements = {
         o = "()",
         O = "()",
-        a = "@͝",
-        A = "@͝",
+        a = "🄰",
+        A = "🄰",
         s = "$",
         S = "$",
         e = "£",
