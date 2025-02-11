@@ -1,0 +1,6 @@
+while wait(0.1) do
+Game.Players.LocalPlayer.Character.Humanoid.Sit = true
+if Game.Players.LocalPlayer.Character.Humanoid.Health == 0 then
+break
+end
+end
