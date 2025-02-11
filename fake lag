@@ -1,0 +1,14 @@
+while true do
+    local player = Game.Players.LocalPlayer
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
+        local lol = player.Character.HumanoidRootPart
+        lol.Anchored = true
+        wait(0.05)
+        lol.Anchored = false
+
+        if player.Character.Humanoid.Health == 0 then
+            break
+        end
+    end
+    wait(0.02) 
+end
