@@ -1,0 +1,85 @@
+local lib = loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Lib-18698"))()
+local rocksize = game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Rock Rewards").Open_Frame:FindFirstChild("RemoteEvent",true)
+if rocksize == nil then
+    repeat task.wait() rocksize = game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Rock Rewards").Open_Frame:FindFirstChild("RemoteEvent",true) until rocksize ~= nil
+end
+local rsn = nil
+local prevnum = nil
+local numb = nil
+local doing = false
+function sizerock(num)
+    coroutine.wrap(function()
+        if rsn then
+            local ds = num/86400
+            ds = math.floor(ds)
+            local hs = (num-(ds*86400))/3600
+            hs = math.floor(hs)
+            local ms = (num-(ds*86400)-(hs*3600))/60
+            ms = math.floor(ms)
+            local ss = (num-(ds*86400)-(hs*3600)-(ms*60))
+            ss = math.floor(ss)
+            lib.updatelabel(tostring(ds)..":"..tostring(hs)..":"..tostring(ms)..":"..tostring(ss),rsn)
+        end
+        if rocksize == nil then
+            repeat task.wait() rocksize = game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Rock Rewards").Open_Frame:FindFirstChild("RemoteEvent",true) until rocksize ~= nil
+        end
+        numb = num
+        if prevnum == nil then
+            prevnum = tick()+1
+        end
+        if tick() < prevnum and not doing then
+            doing = true
+            repeat task.wait() until tick() >= prevnum
+            rocksize:FireServer(numb)
+            doing = false
+        else
+            rocksize:FireServer(numb)
+        end
+        prevnum = tick()+1
+    end)()
+end
+rocksize.Parent.LocalScript.Enabled = false
+getgenv().deletewhendupefound = true
+lib.makelib("fake size LOL")
+local maintab = lib.maketab("Main")
+lib.maketoggle("Auto Change Size (stops glitching out rock)",maintab,function(bool)
+    rocksize.Parent.LocalScript.Disabled = bool
+end)
+rsn = lib.makelabel("Estimated Time",maintab)
+lib.makebutton("Name it a bad word",maintab,function()
+game:GetService("ReplicatedStorage").CNG_TEXT:FireServer([[⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️
+⬜️⬛️⬛️⬛️⬜️⬛️⬜️⬛️⬜️⬛️⬛️⬛️⬜️⬛️⬜️⬛️⬜️
+⬜️⬛️⬜️⬜️⬜️⬛️⬜️⬛️⬜️⬛️⬜️⬜️⬜️⬛️⬜️⬛️⬜️
+⬜️⬛️⬛️⬛️⬜️⬛️⬜️⬛️⬜️⬛️⬜️⬜️⬜️⬛️⬛️⬜️⬜️
+⬜️⬛️⬜️⬜️⬜️⬛️⬜️⬛️⬜️⬛️⬜️⬜️⬜️⬛️⬛️⬜️⬜️
+⬜️⬛️⬜️⬜️⬜️⬛️⬛️⬛️⬜️⬛️⬛️⬛️⬜️⬛️⬜️⬛️⬜️
+⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️
+⬜️⬛️⬜️⬛️⬜️⬛️⬛️⬛️⬜️⬛️⬜️⬛️⬜️⬜️⬜️⬜️⬜️
+⬜️⬛️⬜️⬛️⬜️⬛️⬜️⬛️⬜️⬛️⬜️⬛️⬜️⬜️⬜️⬜️⬜️
+⬜️⬜️⬛️⬜️⬜️⬛️⬜️⬛️⬜️⬛️⬜️⬛️⬜️⬜️⬜️⬜️⬜️
+⬜️⬜️⬛️⬜️⬜️⬛️⬜️⬛️⬜️⬛️⬜️⬛️⬜️⬜️⬜️⬜️⬜️
+⬜️⬜️⬛️⬜️⬜️⬛️⬛️⬛️⬜️⬛️⬛️⬛️⬜️⬜️⬜️⬜️⬜️
+⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️]])
+end)
+local rocksizenum = nil
+lib.makeslider("Size",maintab,0,1000000000,function(num)
+    sizerock(num)
+    rocksizenum = num
+end)
+lib.maketextbox("Size (set number)",maintab,function(num)
+    sizerock(num)
+    rocksizenum = num
+end)
+local csn = 0
+lib.maketextbox("Make custom size slider (input the maximum number)",maintab,function(num)
+    csn += 1
+    lib.makeslider("Size "..tostring(csn),maintab,0,tonumber(num),function(num)
+        sizerock(num)
+        rocksizenum = num
+    end)
+end)
+lib.makelabel("Custom Sliders",maintab)
+
+lib.ondestroyedfunc = function()
+    rocksize.Parent.LocalScript.Enabled = true
+end
