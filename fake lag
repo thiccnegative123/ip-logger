@@ -1,14 +1,174 @@
-while true do
-    local player = Game.Players.LocalPlayer
-    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
-        local lol = player.Character.HumanoidRootPart
-        lol.Anchored = true
-        wait(0.05)
-        lol.Anchored = false
 
-        if player.Character.Humanoid.Health == 0 then
-            break
-        end
-    end
-    wait(0.02) 
+local stop = false
+local gui = Instance.new("ScreenGui", game.Players.LocalPlayer.PlayerGui)
+gui.ResetOnSpawn = false
+local frame = Instance.new("Frame", gui)
+local text = Instance.new("TextLabel", frame)
+local text1 = Instance.new("TextLabel", frame)
+local button = Instance.new("TextButton", frame)
+local button1 = Instance.new("TextButton", frame)
+local button2 = Instance.new("TextButton", frame)
+local button3 = Instance.new("TextButton", frame)
+local frame1 = Instance.new("Frame", gui)
+local offbutton = Instance.new("TextButton", frame1)
+
+
+
+
+frame.Size = UDim2.new(0.5,0,0.5,0)
+frame.Position = UDim2.new(0,231,0,33)
+frame.Active = true
+frame.Draggable = true
+frame.BackgroundColor3 = Color3.fromRGB(180,255,255)
+
+frame1.Size = UDim2.new(0.2,0,0.15,0)
+frame1.Position = UDim2.new(0,675,0,54)
+frame1.Active = true
+frame1.Draggable = true
+frame1.BackgroundColor3 = Color3.fromRGB(180,255,255)
+
+offbutton.Size = UDim2.new(0.5,0,0.5)
+offbutton.Position = UDim2.new(0,35,0,11)
+offbutton.Active = true
+offbutton.Draggable = false
+offbutton.BackgroundColor3 = Color3.fromRGB(255,0,5)
+offbutton.Text = "on/off"
+
+text.Size = UDim2.new(0.4,0,0.4,0)
+text.Position = UDim2.new(0,143,0,-8)
+text.Text = "laggy GUI"
+text.Active = false
+text.Draggable = false
+text.BackgroundTransparency = 1
+text.TextSize = 40
+
+text1.Size = UDim2.new(0.4,0,0.4,0)
+text1.Position = UDim2.new(0,136,0,111)
+text1.Text = "MADE BY HAXAREBEST2"
+text1.Active = false
+text1.Draggable = false
+text1.BackgroundTransparency = 1
+text1.TextSize = 28
+
+button.Size = UDim2.new(0.2,0,0.3)
+button.Position = UDim2.new(0,1,0,65)
+button.Active = true
+button.Draggable = false
+button.BackgroundColor3 = Color3.fromRGB(0,255,5)
+button.Text = "lag a little bit"
+
+button1.Size = UDim2.new(0.2,0,0.3)
+button1.Position = UDim2.new(0,121,0,65)
+button1.Active = true
+button1.Draggable = false
+button1.BackgroundColor3 = Color3.fromRGB(0,255,5)
+button1.Text = "worse lag"
+
+button2.Size = UDim2.new(0.2,0,0.3)
+button2.Position = UDim2.new(0,241,0,65)
+button2.Active = true
+button2.Draggable = false
+button2.BackgroundColor3 = Color3.fromRGB(0,255,5)
+button2.Text = "worst lag"
+
+button3.Size = UDim2.new(0.2,0,0.3)
+button3.Position = UDim2.new(0,361,0,65)
+button3.Active = true
+button3.Draggable = false
+button3.BackgroundColor3 = Color3.fromRGB(0,255,5)
+button3.Text = "freeze"
+
+local stop0 = false
+button.MouseButton1Click:Connect(function()
+	if stop0 then
+		stop0 = false
+		button.Text = "lag a little bit (off)"
+	else
+		stop0 = true
+		button.Text = "lag a little bit (on)"
+		task.spawn(function()
+			while stop0 do
+				local player = game.Players.LocalPlayer
+				local char = player.Character
+				if char and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("Humanoid") then
+					local root = char.HumanoidRootPart
+					root.Anchored = true
+					task.wait(0.01)
+					root.Anchored = false
+					task.wait(0.02)
+				end
+			end
+		end)
+	end
+end)
+
+
+
+
+button1.MouseButton1Click:Connect(function()
+	if stop then
+		stop = false
+button1.Text = "worse lag(off)"
+	else
+		stop = true
+		task.spawn(function()
+button1.Text = "worse lag(on)"
+			while stop do
+				local player = game.Players.LocalPlayer
+				local char = player.Character
+				if char and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("Humanoid") then
+					local root = char.HumanoidRootPart
+					root.Anchored = true
+					task.wait(0.05)
+					root.Anchored = false
+					task.wait(0.02)
+				end
+			end
+		end)
+	end
+end)
+
+
+local stop2 = false
+button2.MouseButton1Click:Connect(function()
+	if stop2 then
+		stop2 = false
+		button2.Text = "worst lag (off)"
+	else
+		stop2 = true
+		button2.Text = "worst lag (on)"
+		task.spawn(function()
+			while stop2 do
+				local player = game.Players.LocalPlayer
+				local char = player.Character
+				if char and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("Humanoid") then
+					local root = char.HumanoidRootPart
+					root.Anchored = true
+					task.wait(0.15)
+					root.Anchored = false
+					task.wait(0.001)
+				end
+			end
+		end)
+	end
+end)
+
+
+button3.MouseButton1Click:Connect(function()
+local humanoidroot = game.Players.LocalPlayer.Character.HumanoidRootPart
+if humanoidroot.Anchored == false then
+humanoidroot.Anchored = true
+button3.Text = "freeze(on)"
+else
+humanoidroot.Anchored = false
+button3.Text = "freeze(off)"
 end
+end)
+
+offbutton.MouseButton1Click:Connect(function()
+if frame.Visible == true then
+frame.Visible = false
+else
+frame.Visible = true
+end
+end)
