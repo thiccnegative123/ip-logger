@@ -1,0 +1,213 @@
+-- Notification on load
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Random Info Grabber";
+    Text = "Made by Haxarebest2";
+    Duration = 5
+})
+
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Press G to close all guis";
+    Text = "";
+    Duration = 5
+})
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+local mouse = player:GetMouse()
+
+local openGuis = {}
+
+-- Get friends in server
+local function getFriendsInServer(targetPlayer)
+
+    local success, pages = pcall(function()
+        return Players:GetFriendsAsync(targetPlayer.UserId)
+    end)
+
+    if not success or not pages then return {} end
+
+    local friendsInServer = {}
+
+    repeat
+        local friendsPage = pages:GetCurrentPage()
+
+        for _, friendInfo in pairs(friendsPage) do
+            local friendPlayer = Players:FindFirstChild(friendInfo.Username)
+
+            if friendPlayer then
+                table.insert(friendsInServer, friendInfo.Username)
+            end
+        end
+
+        if not pages.IsFinished then
+            pages:AdvanceToNextPageAsync()
+        end
+
+    until pages.IsFinished
+
+    return friendsInServer
+
+end
+
+-- Get friend count
+local function getFriendCount(userId)
+
+    local success, pages = pcall(function()
+        return Players:GetFriendsAsync(userId)
+    end)
+
+    if not success or not pages then
+        return "Unknown"
+    end
+
+    local count = 0
+
+    repeat
+        local friends = pages:GetCurrentPage()
+        count += #friends
+
+        if not pages.IsFinished then
+            pages:AdvanceToNextPageAsync()
+        end
+
+    until pages.IsFinished
+
+    return count
+
+end
+
+-- Get player tools
+local function getPlayerTools(targetPlayer)
+
+    local tools = {}
+
+    if targetPlayer:FindFirstChild("Backpack") then
+        for _, item in pairs(targetPlayer.Backpack:GetChildren()) do
+            table.insert(tools, item.Name.." (Backpack)")
+        end
+    end
+
+    local char = targetPlayer.Character
+    if char then
+        for _, item in pairs(char:GetChildren()) do
+            if item:IsA("Tool") then
+                table.insert(tools, item.Name.." (Equipped)")
+            end
+        end
+    end
+
+    if #tools == 0 then
+        return "None"
+    else
+        return table.concat(tools, ", ")
+    end
+
+end
+
+-- Create GUI
+local function createGui(targetPlayer)
+
+    local char = targetPlayer.Character
+    if not char then return end
+
+    local head = char:FindFirstChild("Head")
+    if not head then return end
+
+    local friendCount = getFriendCount(targetPlayer.UserId)
+    local toolsList = getPlayerTools(targetPlayer)
+    local friendsInServer = getFriendsInServer(targetPlayer)
+
+    local friendsInServerText = "None"
+    if #friendsInServer > 0 then
+        friendsInServerText = table.concat(friendsInServer, ", ")
+    end
+
+    local gui = Instance.new("BillboardGui")
+    gui.Size = UDim2.new(0, 350, 0, 220)
+    gui.StudsOffset = Vector3.new(0, 3, 0)
+    gui.AlwaysOnTop = true
+    gui.Parent = head
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(1,0,1,0)
+    frame.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    frame.BackgroundTransparency = 0.1
+    frame.BorderSizePixel = 0
+    frame.Parent = gui
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0,5)
+    corner.Parent = frame
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(0,255,0)
+    stroke.Thickness = 1
+    stroke.Parent = frame
+
+    local text = Instance.new("TextLabel")
+    text.Size = UDim2.new(1,-10,1,-10)
+    text.Position = UDim2.new(0,5,0,5)
+    text.BackgroundTransparency = 1
+    text.TextColor3 = Color3.fromRGB(0,255,0)
+    text.TextSize = 22
+    text.Font = Enum.Font.Code
+    text.TextWrapped = true
+    text.RichText = true
+    text.TextXAlignment = Enum.TextXAlignment.Left
+    text.TextYAlignment = Enum.TextYAlignment.Top
+    text.Parent = frame
+
+    text.Text =
+        "> Username: "..targetPlayer.Name..
+        "\n> UserId: "..targetPlayer.UserId..
+        "\n> Account Age: "..targetPlayer.AccountAge.." days"..
+        "\n> Friends: "..friendCount..
+        "\n> Tools: "..toolsList..
+        "\n> Friends in Server: "..friendsInServerText
+
+    table.insert(openGuis, gui)
+    return gui
+
+end
+
+-- Click player to show GUI
+mouse.Button1Down:Connect(function()
+
+    local target = mouse.Target
+    if not target then return end
+
+    local character = target:FindFirstAncestorOfClass("Model")
+    if not character then return end
+
+    local clickedPlayer = Players:GetPlayerFromCharacter(character)
+    if not clickedPlayer then return end
+
+    for i = #openGuis,1,-1 do
+        local gui = openGuis[i]
+        if gui and gui.Parent and gui.Parent:IsDescendantOf(character) then
+            gui:Destroy()
+            table.remove(openGuis,i)
+        end
+    end
+
+    createGui(clickedPlayer)
+
+end)
+
+-- Press G to close all GUIs
+UserInputService.InputBegan:Connect(function(input,gameProcessed)
+
+    if gameProcessed then return end
+
+    if input.KeyCode == Enum.KeyCode.G then
+        for _,gui in ipairs(openGuis) do
+            if gui then
+                gui:Destroy()
+            end
+        end
+        openGuis = {}
+    end
+
+end)
